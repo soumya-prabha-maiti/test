@@ -1,8 +1,10 @@
-# Define the data module
-from glaseg.module.dataset import GlaS_SegmentationDataset
-
-
 import os
+
+import pytorch_lightning as pl
+from torch.utils.data import DataLoader
+from torchvision import transforms
+
+from glaseg.module.dataset import GlaS_SegmentationDataset
 
 
 class SegmentationDataModule(pl.LightningDataModule):
