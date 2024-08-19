@@ -1,6 +1,6 @@
-# Define the model
-from torch import nn as nn
 import lightning as L
+from lightning.pytorch.utilities.types import STEP_OUTPUT, OptimizerLRScheduler
+from torch import nn, optim
 
 
 class SegmentationModel(L.LightningModule):
@@ -51,3 +51,9 @@ class SegmentationModel(L.LightningModule):
 
         x = self.conv5(x)
         return x
+
+    def training_step(self, batch, batch_idx) -> STEP_OUTPUT:
+        pass
+
+    def configure_optimizers(self):
+        return optim.Adam(self.parameters(), lr=1e-3)
