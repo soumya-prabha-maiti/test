@@ -1,10 +1,10 @@
 import lightning as L
-from lightning.pytorch.utilities.types import STEP_OUTPUT, OptimizerLRScheduler
+from lightning.pytorch.utilities.types import STEP_OUTPUT
 from torch import nn, optim
 
 
 class SegmentationModel(L.LightningModule):
-    def __init__(self, num_classes):
+    def __init__(self, num_output_classes):
         super().__init__()
         self.conv1 = nn.Conv2d(3, 32, kernel_size=3, padding=1)
         self.bn1 = nn.BatchNorm2d(32)
@@ -26,7 +26,7 @@ class SegmentationModel(L.LightningModule):
         self.relu4 = nn.ReLU()
         self.pool4 = nn.MaxPool2d(kernel_size=2, stride=2)
 
-        self.conv5 = nn.Conv2d(256, num_classes, kernel_size=1)
+        self.conv5 = nn.Conv2d(256, num_output_classes, kernel_size=1)
 
     def forward(self, x):
         x = self.conv1(x)
@@ -52,8 +52,12 @@ class SegmentationModel(L.LightningModule):
         x = self.conv5(x)
         return x
 
-    def training_step(self, batch, batch_idx) -> STEP_OUTPUT:
-        pass
+    def training_step(self, batch, batch_idx):
+        images, masks = batch
+        logits = self.model(images)
+        loss = self.loss_fn(logits, masks)
+        self.log('train_loss', loss)
+        return loss
 
     def configure_optimizers(self):
         return optim.Adam(self.parameters(), lr=1e-3)
