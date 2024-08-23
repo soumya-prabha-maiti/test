@@ -164,5 +164,4 @@ cython_debug/
 /data/*
 !/data/**/.gitkeep
 .DS_Store
-
-lightning_logs
+/lightning_logs
